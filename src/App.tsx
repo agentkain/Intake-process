@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Dashboard from './components/Dashboard'
 import StepForm from './components/StepForm'
 import RetainerAgreement from './components/RetainerAgreement'
@@ -26,6 +26,7 @@ function App() {
   const [showCaseDetails, setShowCaseDetails] = useState(false)
   const [intakeForms, setIntakeForms] = useState<any[]>([])
   const [selectedCaseDetails, setSelectedCaseDetails] = useState<any>(null)
+  const [, setCurrentPage] = useState('dashboard')
   const [completedFormData, setCompletedFormData] = useState<any>(null)
 
   const handleNextCaseStep = () => {
@@ -36,7 +37,7 @@ function App() {
 
   const handleSubmit = (status: 'turned down' | 'referred out') => {
     setFinalStatus(status)
-    setCurrentCaseStep(3) // Both statuses end at the final step
+    setCurrentCaseStep(status === 'turned down' ? 3 : 3) // Both statuses end at the final step
   }
 
   const handleExitForm = () => {
@@ -44,6 +45,7 @@ function App() {
     setShowRetainerAgreement(false)
     setShowDocumentsPage(false)
     setShowCaseDetails(false)
+    setCurrentPage('dashboard')
   }
 
   const handleIntakeFormComplete = (formData: any) => {
@@ -72,6 +74,7 @@ function App() {
 
   const handleOpenDocuments = () => {
     setShowDocumentsPage(true)
+    setCurrentPage('documents')
   }
 
   const handleViewCaseDetails = (formData: any) => {
@@ -81,6 +84,7 @@ function App() {
   }
 
   const handleNavigate = (page: string) => {
+    setCurrentPage(page)
     if (page === 'documents') {
       setShowDocumentsPage(true)
       setShowIntakeForm(false)
@@ -128,11 +132,9 @@ function App() {
                   <DocumentsPage intakeForms={intakeForms} onViewCaseDetails={handleViewCaseDetails} />
                 ) : showCaseDetails ? (
                   <CaseDetails
-                    caseNumber={Math.floor(100000 + Math.random() * 900000)}
-                    finalStatus={finalStatus}
-                    currentStep={currentCaseStep}
-                    formData={selectedCaseDetails || completedFormData}
-                  />
+                          caseNumber={Math.floor(100000 + Math.random() * 900000)}
+                          finalStatus={finalStatus}
+                          formData={selectedCaseDetails || completedFormData} currentStep={0}                  />
                 ) : (
                   <Dashboard
                     currentStep={currentCaseStep}
@@ -150,11 +152,11 @@ function App() {
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <Chatbot />
-            </div>
-            <Footer />
           </div>
+          <div className="relative">
+            <Chatbot />
+          </div>
+          <Footer />
         </div>
       </div>
     </div>
